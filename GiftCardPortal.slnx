@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/GiftCardPortal.Bff/GiftCardPortal.Bff.csproj" />
+  <Project Path="tests/GiftCardPortal.Bff.Tests/GiftCardPortal.Bff.Tests.csproj" />
+</Solution>

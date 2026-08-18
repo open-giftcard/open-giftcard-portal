@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <RootNamespace>GiftCardPortal.Bff</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="NSwag.ApiDescription.Client" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="GiftCardPortal.Bff.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <OpenApiReference
+      Include="..\..\contracts\backend.openapi.json"
+      CodeGenerator="NSwagCSharp"
+      Namespace="GiftCardPortal.Bff.Backend"
+      ClassName="BackendApiClient">
+      <Options>/UseBaseUrl:false /GenerateClientInterfaces:true /GenerateOptionalParameters:true /GenerateNullableReferenceTypes:true /ParameterDateTimeFormat:o /JsonLibrary:SystemTextJson</Options>
+    </OpenApiReference>
+  </ItemGroup>
+
+  <Target
+    Name="BuildFrontendForPublish"
+    BeforeTargets="ComputeFilesToPublish"
+    Condition="'$(SkipFrontendBuild)' != 'true'">
+    <Exec
+      WorkingDirectory="..\GiftCardPortal.Web"
+      Command="pnpm run build" />
+    <ItemGroup>
+      <_FrontendFile Remove="@(_FrontendFile)" />
+      <_FrontendFile Include="..\GiftCardPortal.Web\dist\**\*" />
+      <ResolvedFileToPublish Include="@(_FrontendFile)">
+        <RelativePath>wwwroot\%(_FrontendFile.RecursiveDir)%(_FrontendFile.Filename)%(_FrontendFile.Extension)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+</Project>

@@ -1,0 +1,31 @@
+# .NET
+**/bin/
+**/obj/
+artifacts/
+
+# Node
+**/node_modules/
+**/dist/
+**/.vite/
+**/coverage/
+**/*.tsbuildinfo
+pnpm-debug.log*
+
+# Playwright
+**/playwright-report/
+**/test-results/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+appsettings.Local.json
+*.user
+.local/
+
+# IDE and operating system
+.idea/
+.vs/
+.vscode/
+.DS_Store
+Thumbs.db
