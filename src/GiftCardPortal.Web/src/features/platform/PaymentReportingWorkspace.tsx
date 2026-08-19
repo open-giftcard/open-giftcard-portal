@@ -11,6 +11,7 @@ import { LoadingPanel, StatusPanel } from "../../components/StatusPanel";
 import { DataTable, type DataTableColumn } from "../../components/DataTable";
 import { useFormatters, type PortalFormatters } from "../../i18n/formatters";
 import { useTranslation, type Translator } from "../../i18n/translate";
+import { defaultCurrency } from "../../config";
 
 /**
  * One column per fact, ordered so the identifying values lead and the money
@@ -240,7 +241,7 @@ export function PaymentReportingWorkspace({
             }
           >
             <Label className="field__label">{t("Currency")}</Label>
-            <Input className="field__input" maxLength={3} placeholder="TRY" />
+            <Input className="field__input" maxLength={3} placeholder={defaultCurrency} />
           </TextField>
           <TextField
             className="field"

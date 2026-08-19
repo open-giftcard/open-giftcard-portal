@@ -37,12 +37,24 @@ export function interpolate(
   });
 }
 
+/**
+ * One dictionary per translated language.
+ *
+ * English is absent on purpose: it is the source language, so its "dictionary"
+ * is the screens themselves and a lookup would only ever return the key. Adding
+ * a language means adding a dictionary file, registering it here, and widening
+ * `PortalLanguage`; nothing in this function changes.
+ */
+const dictionaries: Partial<Record<PortalLanguage, Readonly<Record<string, string>>>> = {
+  tr: turkish,
+};
+
 export function translate(
   language: PortalLanguage,
   text: string,
   values?: TranslationValues,
 ): string {
-  const template = language === "tr" ? (turkish[text] ?? text) : text;
+  const template = dictionaries[language]?.[text] ?? text;
   return interpolate(template, values);
 }
 

@@ -1,5 +1,6 @@
 import type { PortalRecipientContactType } from "../../types";
 import { asIsoDate } from "./spreadsheet";
+import { defaultCurrency } from "../../config";
 
 /**
  * Turns a worksheet grid into rows the bulk form already understands.
@@ -218,7 +219,7 @@ export function importRows(
     rows.push({
       itemReference,
       amount,
-      currency: (cellAt(row, "currency") || "TRY").toUpperCase(),
+      currency: (cellAt(row, "currency") || defaultCurrency).toUpperCase(),
       validFrom: asIsoDate(cellAt(row, "validFrom")),
       expiresAt,
       contactType: contact.type,
@@ -237,7 +238,7 @@ export function importRows(
         message: problem.message,
         itemReference: cellAt(row, "itemReference") || `ROW-${problem.line}`,
         amount: normalizeAmount(cellAt(row, "amount")),
-        currency: (cellAt(row, "currency") || "TRY").toUpperCase(),
+        currency: (cellAt(row, "currency") || defaultCurrency).toUpperCase(),
         validFrom: asIsoDate(cellAt(row, "validFrom")),
         expiresAt: asIsoDate(cellAt(row, "expiresAt")),
         contactType: recipientContact.includes("@") ? "email" : "phone",

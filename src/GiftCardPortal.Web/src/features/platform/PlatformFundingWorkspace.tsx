@@ -9,6 +9,7 @@ import type {
 } from "../../types";
 import { useFormatters } from "../../i18n/formatters";
 import { useTranslation } from "../../i18n/translate";
+import { defaultCurrency } from "../../config";
 
 interface AllocationIntent {
   amount: string;
@@ -77,7 +78,7 @@ export function PlatformFundingWorkspace({
   const { t } = useTranslation();
   const formatters = useFormatters();
   const [amount, setAmount] = useState("");
-  const [currency, setCurrency] = useState("TRY");
+  const [currency, setCurrency] = useState(defaultCurrency);
   const [businessReference, setBusinessReference] = useState("");
   const [allocationIntent, setAllocationIntent] = useState<AllocationIntent>();
   const [reversalAllocation, setReversalAllocation] =
@@ -88,7 +89,7 @@ export function PlatformFundingWorkspace({
   useEffect(() => {
     if (allocated) {
       setAmount("");
-      setCurrency("TRY");
+      setCurrency(defaultCurrency);
       setBusinessReference("");
       setAllocationIntent(undefined);
     }

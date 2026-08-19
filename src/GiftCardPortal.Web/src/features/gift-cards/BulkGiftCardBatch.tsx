@@ -25,6 +25,7 @@ import {
   requiredColumns,
   totalsByCurrency,
 } from "./spreadsheetRows";
+import { defaultCurrency } from "../../config";
 
 interface BulkBatchDraftRow {
   key: string;
@@ -144,7 +145,7 @@ function newRow(): BulkBatchDraftRow {
     key: newIdentifier(),
     itemReference: "",
     amount: "",
-    currency: "TRY",
+    currency: defaultCurrency,
     validFrom: "",
     expiresAt: "",
     isTransferable: false,

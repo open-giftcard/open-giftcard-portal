@@ -9,6 +9,7 @@ import type {
 } from "../../types";
 import { useFormatters } from "../../i18n/formatters";
 import { useTranslation, type Translator } from "../../i18n/translate";
+import { defaultCurrency } from "../../config";
 
 interface FinanceOverviewProps {
   summary?: PortalFinancialSummary;
@@ -365,7 +366,7 @@ export function FinanceOverview({
                 className="field__input"
                 maxLength={3}
                 pattern="[A-Za-z]{3}"
-                placeholder="TRY"
+                placeholder={defaultCurrency}
               />
             </TextField>
             <TextField

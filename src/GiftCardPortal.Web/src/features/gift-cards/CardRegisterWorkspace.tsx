@@ -11,6 +11,7 @@ import { LoadingPanel, StatusPanel } from "../../components/StatusPanel";
 import { DataTable, type DataTableColumn } from "../../components/DataTable";
 import { useFormatters, type PortalFormatters } from "../../i18n/formatters";
 import { useTranslation, type Translator } from "../../i18n/translate";
+import { defaultCurrency } from "../../config";
 
 /**
  * Backend states are identifiers. Turning them into sentences here rather than
@@ -227,7 +228,7 @@ export function CardRegisterWorkspace({
             }
           >
             <Label className="field__label">{t("Currency")}</Label>
-            <Input className="field__input" maxLength={3} placeholder="TRY" />
+            <Input className="field__input" maxLength={3} placeholder={defaultCurrency} />
           </TextField>
           <TextField
             className="field"

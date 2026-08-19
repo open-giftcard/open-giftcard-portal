@@ -11,6 +11,7 @@ import type { PortalBulkGiftCardBatch } from "../../types";
 import { BulkGiftCardBatch } from "./BulkGiftCardBatch";
 import type * as SpreadsheetModule from "./spreadsheet";
 import { readWorkbookGrid } from "./spreadsheet";
+import { defaultCurrency } from "../../config";
 
 vi.mock("./spreadsheet", async (importOriginal) => {
   const actual = await importOriginal<typeof SpreadsheetModule>();
@@ -229,7 +230,7 @@ describe("BulkGiftCardBatch", () => {
           expect.objectContaining({
             itemReference: "BENEFIT-001",
             amount: "100",
-            currency: "TRY",
+            currency: defaultCurrency,
             contactType: "email",
             recipientContact: "alpha@example.com",
           }),
@@ -450,7 +451,7 @@ describe("BulkGiftCardBatch", () => {
   it("checks a hand-typed batch against corporate credit too", async () => {
     const user = userEvent.setup();
     renderBuilder({
-      availableCorporateCredit: [{ currency: "TRY", amount: 50 }],
+      availableCorporateCredit: [{ currency: defaultCurrency, amount: 50 }],
     });
 
     await user.click(
@@ -471,7 +472,7 @@ describe("BulkGiftCardBatch", () => {
     );
 
     expect(screen.getByRole("alert")).toHaveTextContent(
-      "TRY 500.00 requested but 50.00 available",
+      `${defaultCurrency} 500.00 requested but 50.00 available`,
     );
     expect(
       screen.queryByRole("region", { name: "Review bulk gift card batch" }),

@@ -20,13 +20,19 @@ export interface PortalPreferences {
   clock: PortalClockFormat;
 }
 
-export const languages: PortalLanguage[] = ["tr", "en"];
+export const languages: PortalLanguage[] = ["en", "tr"];
 export const themeChoices: PortalThemeChoice[] = ["light", "dark", "system"];
 export const clockFormats: PortalClockFormat[] = ["24h", "12h"];
 
-/** What a first-time visitor gets: Turkish, the device theme, a 24-hour clock. */
+/**
+ * What a first-time visitor gets: English, the device theme, a 24-hour clock.
+ *
+ * English is the source language of every screen, so it is the one choice that
+ * cannot be partially translated. A visitor who wants another language picks it;
+ * a deployment serving mainly one market can change this line.
+ */
 export const defaultPreferences: PortalPreferences = {
-  language: "tr",
+  language: "en",
   theme: "system",
   clock: "24h",
 };

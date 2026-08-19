@@ -14,6 +14,7 @@ import type { PortalGiftCard } from "../../types";
 import { BulkGiftCardBatch } from "./BulkGiftCardBatch";
 import { GiftCardDistribution } from "./GiftCardDistribution";
 import { GiftCardLifecycleDetail } from "./GiftCardLifecycleDetail";
+import { defaultCurrency } from "../../config";
 
 interface GiftCardIssuanceIntent {
   amount: string;
@@ -113,7 +114,7 @@ export function GiftCardWorkspace({
   const { t } = useTranslation();
   const formatters = useFormatters();
   const [amount, setAmount] = useState("");
-  const [currency, setCurrency] = useState("TRY");
+  const [currency, setCurrency] = useState(defaultCurrency);
   const [validFrom, setValidFrom] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [isTransferable, setIsTransferable] = useState(false);
@@ -124,7 +125,7 @@ export function GiftCardWorkspace({
   useEffect(() => {
     if (issuedCard) {
       setAmount("");
-      setCurrency("TRY");
+      setCurrency(defaultCurrency);
       setValidFrom("");
       setExpiresAt("");
       setIsTransferable(false);

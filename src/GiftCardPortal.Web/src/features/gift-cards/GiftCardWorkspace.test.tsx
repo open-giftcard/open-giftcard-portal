@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { PortalGiftCard } from "../../types";
 import { GiftCardWorkspace } from "./GiftCardWorkspace";
+import { defaultCurrency } from "../../config";
 
 const card: PortalGiftCard = {
   id: "018f5dc3-a865-7c11-a2a0-8326b3b96f62",
@@ -124,7 +125,7 @@ describe("GiftCardWorkspace", () => {
       name: "Review gift card issuance",
     });
     expect(review).toHaveTextContent("Portal E2E");
-    expect(review).toHaveTextContent("TRY 250.50");
+    expect(review).toHaveTextContent(`${defaultCurrency} 250.50`);
     expect(review).toHaveTextContent("STAFF-AWARD-99");
     expect(review).toHaveTextContent("Transferable · Divisible");
 
@@ -137,7 +138,7 @@ describe("GiftCardWorkspace", () => {
     expect(submitted).toEqual(
       expect.objectContaining({
         amount: "250.50",
-        currency: "TRY",
+        currency: defaultCurrency,
         isTransferable: true,
         isDivisible: true,
         businessReference: "STAFF-AWARD-99",

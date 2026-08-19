@@ -6,6 +6,7 @@ import {
   totalsByCurrency,
 } from "./spreadsheetRows";
 import { asIsoDate, columnIndex } from "./spreadsheet";
+import { defaultCurrency } from "../../config";
 
 const header = [
   "Name",
@@ -105,7 +106,8 @@ describe("importing rows", () => {
     expect(result.rows[0]).toMatchObject({
       itemReference: "EMP-1",
       amount: "250.00",
-      currency: "TRY",
+      // The sheet leaves currency blank, so this row proves the fallback.
+      currency: defaultCurrency,
       contactType: "email",
       recipientContact: "ada@example.com",
       displayName: "Ada Lovelace",
@@ -113,6 +115,8 @@ describe("importing rows", () => {
     expect(result.rows[1]).toMatchObject({
       // No employee id in the sheet, so the worksheet line stands in.
       itemReference: "ROW-3",
+      // This row does supply a currency, in lower case, so it proves a
+      // provided value wins over the fallback and is normalised.
       currency: "TRY",
       contactType: "phone",
       recipientContact: "+905551112233",

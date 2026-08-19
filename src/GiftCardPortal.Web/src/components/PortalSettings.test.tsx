@@ -31,29 +31,29 @@ describe("PortalSettings", () => {
     window.localStorage.clear();
   });
 
-  it("opens in Turkish for a first-time visitor and switches to English", async () => {
+  it("opens in English for a first-time visitor and switches to Turkish", async () => {
     renderSettings();
     const user = await openSettings();
 
-    expect(screen.getByRole("radio", { name: /Türkçe/ })).toBeChecked();
-    expect(screen.getByText("Dil")).toBeVisible();
-
-    await user.click(screen.getByRole("radio", { name: /English/ }));
-
+    expect(screen.getByRole("radio", { name: /English/ })).toBeChecked();
     expect(screen.getByText("Language")).toBeVisible();
-    expect(document.documentElement.lang).toBe("en");
+
+    await user.click(screen.getByRole("radio", { name: /Türkçe/ }));
+
+    expect(screen.getByText("Dil")).toBeVisible();
+    expect(document.documentElement.lang).toBe("tr");
   });
 
   it("paints the chosen theme and tells native controls about it", async () => {
     renderSettings();
     const user = await openSettings();
 
-    await user.click(screen.getByRole("radio", { name: /Koyu/ }));
+    await user.click(screen.getByRole("radio", { name: /Dark/ }));
 
     expect(document.documentElement.dataset.theme).toBe("dark");
     expect(document.documentElement.style.colorScheme).toBe("dark");
 
-    await user.click(screen.getByRole("radio", { name: /Açık/ }));
+    await user.click(screen.getByRole("radio", { name: /Light/ }));
 
     expect(document.documentElement.dataset.theme).toBe("light");
   });
@@ -65,12 +65,12 @@ describe("PortalSettings", () => {
     // 14:05 UTC is the same moment on both clocks, so only the format differs.
     // The sample is rendered in the machine's zone, so the assertion is on the
     // shape rather than on a fixed hour.
-    expect(screen.getByRole("radio", { name: /24 saat/ })).toBeChecked();
-    const twelveHour = screen.getByRole("radio", { name: /12 saat/ });
-    expect(twelveHour.closest("label")).toHaveTextContent(/ÖÖ|ÖS/);
+    expect(screen.getByRole("radio", { name: /24-hour/ })).toBeChecked();
+    const twelveHour = screen.getByRole("radio", { name: /12-hour/ });
+    expect(twelveHour.closest("label")).toHaveTextContent(/AM|PM/);
     expect(
-      screen.getByRole("radio", { name: /24 saat/ }).closest("label"),
-    ).not.toHaveTextContent(/ÖÖ|ÖS/);
+      screen.getByRole("radio", { name: /24-hour/ }).closest("label"),
+    ).not.toHaveTextContent(/AM|PM/);
 
     await user.click(twelveHour);
     expect(twelveHour).toBeChecked();
@@ -80,7 +80,6 @@ describe("PortalSettings", () => {
     renderSettings();
     const user = await openSettings();
 
-    await user.click(screen.getByRole("radio", { name: /English/ }));
     await user.click(screen.getByRole("radio", { name: /Dark/ }));
     await user.click(screen.getByRole("radio", { name: /12-hour/ }));
 
