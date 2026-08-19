@@ -82,13 +82,13 @@ CREATE ROLE giftcard_portal_app
 CREATE DATABASE giftcard_portal OWNER giftcard_portal_app;
 ```
 
-Start the pinned sibling backend at `http://localhost:5144`. In one PowerShell
+Start the pinned sibling backend at `http://localhost:5143`. In one PowerShell
 window, start the BFF:
 
 ```powershell
 $env:ConnectionStrings__Portal =
   "Host=localhost;Port=5432;Database=giftcard_portal;Username=giftcard_portal_app;Password=<local password>"
-$env:Backend__BaseUrl = "http://localhost:5144"
+$env:Backend__BaseUrl = "http://localhost:5143"
 dotnet run --project src\GiftCardPortal.Bff
 ```
 
