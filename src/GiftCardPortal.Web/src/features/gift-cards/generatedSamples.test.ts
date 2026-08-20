@@ -16,7 +16,9 @@ describe.each([
   ["recipients-dated-500.xlsx", 500, 165000],
 ])("generated bulk sample %s", (fileName, expectedRows, expectedTotal) => {
   it("round-trips through the portal importer with populated dates", async () => {
-    const bytes = await readFile(resolve(repoRoot, "tests/fixtures/spreadsheets", fileName));
+    const bytes = await readFile(
+      resolve(repoRoot, "tests/fixtures/spreadsheets", fileName),
+    );
     const workbook = new File([bytes], fileName, {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });

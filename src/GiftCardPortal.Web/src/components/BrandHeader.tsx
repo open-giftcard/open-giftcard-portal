@@ -16,12 +16,12 @@ export function BrandHeader() {
           <img
             className="brand-logo"
             src="/logo.svg"
-            alt="Gift Card Platform"
+            alt="Open Giftcard"
             width="148"
             height="40"
           />
           <span className="brand-divider" aria-hidden="true" />
-          <span className="brand-product">{t("Gift Card Portal")}</span>
+          <span className="brand-product">{t("Open Giftcard Portal")}</span>
         </Link>
         <PortalSettings />
       </div>

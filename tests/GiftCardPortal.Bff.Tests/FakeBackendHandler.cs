@@ -159,7 +159,11 @@ internal sealed class FakeBackendHandler : HttpMessageHandler
 
     public int TeamDisableCount { get; private set; }
 
-    public int RefreshCount { get; private set; }
+    private int _refreshCount;
+
+    public int RefreshCount => Volatile.Read(ref _refreshCount);
+
+    public TimeSpan RefreshDelay { get; set; }
 
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,
@@ -175,7 +179,12 @@ internal sealed class FakeBackendHandler : HttpMessageHandler
 
         if (path == "/api/v1/auth/refresh")
         {
-            RefreshCount++;
+            if (RefreshDelay > TimeSpan.Zero)
+            {
+                await Task.Delay(RefreshDelay, cancellationToken);
+            }
+
+            Interlocked.Increment(ref _refreshCount);
             return Json(HttpStatusCode.OK, TokenPair("access-two", "refresh-two"));
         }
 

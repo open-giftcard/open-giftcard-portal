@@ -46,14 +46,14 @@ backend revalidates every field regardless.
 
 ## Known gaps
 
-- **Session refresh coordination is per process.** The in-memory lock that
-  serialises token refresh is not shared across replicas, and its entries are
-  never evicted, so its memory grows with the number of distinct sessions seen.
-  Correctness across replicas rests on the database check rather than the lock.
-- **The committed SPA bundle can drift from source.** `GiftCardPortal.Bff/wwwroot`
-  contains a built bundle checked into the repository. It is rebuilt when the
-  source changes, but nothing enforces that.
+- **Runtime schema bootstrap still needs DDL privilege.** The reference host
+  creates and evolves its dedicated session table on startup; a high-assurance
+  deployment should use managed migrations and a reduced-privilege runtime role.
 - **No staging certification and no penetration test.**
+
+The complete separation between implemented controls, operator responsibilities,
+and unverified release work is tracked in
+[docs/PRODUCTION_READINESS.md](docs/PRODUCTION_READINESS.md).
 
 ## Scope
 

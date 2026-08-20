@@ -1854,7 +1854,7 @@ export function App() {
       {content}
       <footer className="site-footer">
         <div className="page-width">
-          {t("Gift Card Portal · Secure organization access")}
+          {t("Open Giftcard Portal · Secure organization access")}
         </div>
       </footer>
     </div>

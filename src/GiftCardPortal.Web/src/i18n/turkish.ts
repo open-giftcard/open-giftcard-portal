@@ -99,10 +99,10 @@ export const turkish: Readonly<Record<string, string>> = {
   "Organization audit evidence is temporarily unavailable.":
     "Kuruluş denetim kayıtları geçici olarak kullanılamıyor.",
   "Skip to main content": "Ana içeriğe geç",
-  "Gift Card Portal · Secure organization access":
-    "Hediye Kartı Portalı · Güvenli kuruluş erişimi",
+  "Open Giftcard Portal · Secure organization access":
+    "Open Giftcard Portal · Güvenli kuruluş erişimi",
   "Go to portal home": "Portal ana sayfasına git",
-  "Gift Card Portal": "Hediye Kartı Portalı",
+  "Open Giftcard Portal": "Open Giftcard Portal",
 
   // -- shared table furniture ------------------------------------------------
   Actions: "İşlemler",

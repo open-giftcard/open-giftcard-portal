@@ -1,6 +1,6 @@
-﻿# Gift Card Portal
+﻿# Open Giftcard Portal
 
-Gift card company, finance, HR, and platform operations portal.
+Open Giftcard's company, finance, HR, and platform operations portal.
 
 PORTAL-001 provides the secure application shell, real platform login,
 current-user discovery, and verified organization selection. PORTAL-002 adds
@@ -17,7 +17,7 @@ selected-organization gift-card inventory and reviewed issuance with validity
 and capability choices. PORTAL-008 adds inventory-selected card detail,
 immutable lifecycle history, and reviewed suspend, reactivate, cancel, and
 due-expiration controls. PORTAL-009 adds reviewed single-recipient delivery
-and synchronous all-or-nothing 1â€“100 item gift-card batches with transient
+and synchronous all-or-nothing 1–100 item gift-card batches with transient
 recipient contacts and backend-masked results. PORTAL-010 adds backend-filtered,
 cursor-paged financial activity search by category, exact operation, currency,
 literal business/card reference, and UTC date range. PORTAL-011 adds shared,
@@ -32,11 +32,12 @@ receipt/refund detail. The browser never receives backend access or refresh
 tokens and never asks a user to paste an organization, member, role,
 assignment, card, batch, or audit UUID.
 
-Contributor documentation is being rewritten for this release and is not
-published yet. Until it lands, this README is the authoritative guide.
-
-The staging and production configuration contract is part of the documentation
-still to be published.
+This is an open reference implementation, not a hosted card program or a claim
+of production certification. Start with the
+[architecture](docs/ARCHITECTURE.md), [decisions](docs/DECISIONS.md),
+[deployment contract](docs/DEPLOYMENT.md),
+[production-readiness matrix](docs/PRODUCTION_READINESS.md), and
+[public publishing workflow](docs/PUBLISHING.md).
 
 ## Architecture
 
@@ -46,8 +47,8 @@ still to be published.
 - A portal-owned PostgreSQL database stores opaque browser sessions and
   Data Protection-encrypted backend token material.
 - NSwag generates the backend client from `contracts/backend.openapi.json`.
-- The authoritative backend is the sibling `open-giftcard` repository on
-  `main` at `cfee9b1e17ab501e912d8aa8f84136d28e50dc6f`.
+- The authoritative backend is the public `open-giftcard` repository, consumed
+  through the explicitly pinned snapshot documented in `contracts/README.md`.
 
 The backend remains the only authority for authorization, tenancy, ownership,
 and financial rules.

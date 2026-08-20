@@ -241,7 +241,11 @@ export function PaymentReportingWorkspace({
             }
           >
             <Label className="field__label">{t("Currency")}</Label>
-            <Input className="field__input" maxLength={3} placeholder={defaultCurrency} />
+            <Input
+              className="field__input"
+              maxLength={3}
+              placeholder={defaultCurrency}
+            />
           </TextField>
           <TextField
             className="field"

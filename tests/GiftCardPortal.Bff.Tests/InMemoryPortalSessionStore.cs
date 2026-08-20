@@ -14,6 +14,11 @@ internal sealed class InMemoryPortalSessionStore : IPortalSessionStore
     public Task<bool> IsReadyAsync(CancellationToken cancellationToken) =>
         Task.FromResult(IsReady);
 
+    public ValueTask<IAsyncDisposable> AcquireRefreshLockAsync(
+        string sessionKeyHash,
+        CancellationToken cancellationToken) =>
+        ValueTask.FromResult<IAsyncDisposable>(NoopAsyncDisposable.Instance);
+
     public Task<PortalSession?> FindAsync(
         string sessionKeyHash,
         CancellationToken cancellationToken)
@@ -32,5 +37,12 @@ internal sealed class InMemoryPortalSessionStore : IPortalSessionStore
     {
         _sessions.TryRemove(sessionKeyHash, out _);
         return Task.CompletedTask;
+    }
+
+    private sealed class NoopAsyncDisposable : IAsyncDisposable
+    {
+        public static NoopAsyncDisposable Instance { get; } = new();
+
+        public ValueTask DisposeAsync() => ValueTask.CompletedTask;
     }
 }

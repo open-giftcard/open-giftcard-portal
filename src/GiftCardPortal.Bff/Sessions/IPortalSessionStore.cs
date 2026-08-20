@@ -4,6 +4,10 @@ public interface IPortalSessionStore
 {
     Task<bool> IsReadyAsync(CancellationToken cancellationToken);
 
+    ValueTask<IAsyncDisposable> AcquireRefreshLockAsync(
+        string sessionKeyHash,
+        CancellationToken cancellationToken);
+
     Task<PortalSession?> FindAsync(string sessionKeyHash, CancellationToken cancellationToken);
 
     Task UpsertAsync(PortalSession session, CancellationToken cancellationToken);

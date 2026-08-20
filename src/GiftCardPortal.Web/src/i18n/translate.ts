@@ -45,7 +45,9 @@ export function interpolate(
  * a language means adding a dictionary file, registering it here, and widening
  * `PortalLanguage`; nothing in this function changes.
  */
-const dictionaries: Partial<Record<PortalLanguage, Readonly<Record<string, string>>>> = {
+const dictionaries: Partial<
+  Record<PortalLanguage, Readonly<Record<string, string>>>
+> = {
   tr: turkish,
 };
 

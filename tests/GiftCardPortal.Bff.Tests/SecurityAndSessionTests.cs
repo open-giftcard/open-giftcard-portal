@@ -212,6 +212,36 @@ public sealed class SecurityAndSessionTests
     }
 
     [Fact]
+    public async Task ConcurrentExpiringRequestsSpendOneRefreshToken()
+    {
+        await using var factory = new TestApplicationFactory();
+        using var client = factory.CreateCookieClient();
+        await LoginAsync(client);
+        var stored = Assert.Single(factory.Sessions.Sessions);
+        await factory.Sessions.UpsertAsync(
+            stored with { AccessTokenExpiresAtUtc = DateTimeOffset.UtcNow.AddMinutes(-1) },
+            CancellationToken.None);
+        factory.Backend.RefreshDelay = TimeSpan.FromMilliseconds(100);
+
+        var responses = await Task.WhenAll(
+            client.GetAsync("/bff/session"),
+            client.GetAsync("/bff/session"));
+
+        try
+        {
+            Assert.All(responses, response => Assert.Equal(HttpStatusCode.OK, response.StatusCode));
+            Assert.Equal(1, factory.Backend.RefreshCount);
+        }
+        finally
+        {
+            foreach (var response in responses)
+            {
+                response.Dispose();
+            }
+        }
+    }
+
+    [Fact]
     public async Task ForbiddenResponseKeepsThePortalSession()
     {
         await using var factory = new TestApplicationFactory();

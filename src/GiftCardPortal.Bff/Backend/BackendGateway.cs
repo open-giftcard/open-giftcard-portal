@@ -785,6 +785,10 @@ public sealed class BackendGateway(
         using var refreshLock = await refreshCoordinator.AcquireAsync(
             observedSession.SessionKeyHash,
             cancellationToken);
+        await using var distributedRefreshLock =
+            await sessionStore.AcquireRefreshLockAsync(
+                observedSession.SessionKeyHash,
+                cancellationToken);
 
         var current = await sessionStore.FindAsync(
                 observedSession.SessionKeyHash,

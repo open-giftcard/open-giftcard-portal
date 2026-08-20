@@ -1,3 +1,6 @@
+using System.Buffers.Binary;
+using System.Security.Cryptography;
+using System.Text;
 using Npgsql;
 
 namespace GiftCardPortal.Bff.Sessions;
@@ -5,6 +8,27 @@ namespace GiftCardPortal.Bff.Sessions;
 public sealed class PostgreSqlPortalSessionStore(NpgsqlDataSource dataSource)
     : IPortalSessionStore, IPortalSessionStoreInitializer
 {
+    public async ValueTask<IAsyncDisposable> AcquireRefreshLockAsync(
+        string sessionKeyHash,
+        CancellationToken cancellationToken)
+    {
+        var connection = await dataSource.OpenConnectionAsync(cancellationToken);
+        var lockKey = AdvisoryLockKey(sessionKeyHash);
+        try
+        {
+            await using var command = connection.CreateCommand();
+            command.CommandText = "SELECT pg_advisory_lock($1);";
+            command.Parameters.AddWithValue(lockKey);
+            await command.ExecuteScalarAsync(cancellationToken);
+            return new AdvisoryLock(connection, lockKey);
+        }
+        catch
+        {
+            await connection.DisposeAsync();
+            throw;
+        }
+    }
+
     public async Task<bool> IsReadyAsync(CancellationToken cancellationToken)
     {
         try
@@ -138,5 +162,38 @@ public sealed class PostgreSqlPortalSessionStore(NpgsqlDataSource dataSource)
         await using var command = dataSource.CreateCommand(sql);
         command.Parameters.AddWithValue(sessionKeyHash);
         await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private static long AdvisoryLockKey(string sessionKeyHash)
+    {
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(sessionKeyHash));
+        return BinaryPrimitives.ReadInt64BigEndian(hash);
+    }
+
+    private sealed class AdvisoryLock(NpgsqlConnection connection, long lockKey)
+        : IAsyncDisposable
+    {
+        private NpgsqlConnection? _connection = connection;
+
+        public async ValueTask DisposeAsync()
+        {
+            var held = Interlocked.Exchange(ref _connection, null);
+            if (held is null)
+            {
+                return;
+            }
+
+            try
+            {
+                await using var command = held.CreateCommand();
+                command.CommandText = "SELECT pg_advisory_unlock($1);";
+                command.Parameters.AddWithValue(lockKey);
+                await command.ExecuteScalarAsync();
+            }
+            finally
+            {
+                await held.DisposeAsync();
+            }
+        }
     }
 }

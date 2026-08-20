@@ -153,9 +153,7 @@ test("completes the platform customer directory journey", async ({
   await expect(
     page.getByRole("heading", { name: "Customer organizations" }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Portal E2E" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Portal E2E" })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Portal Filtered Customer" }),
   ).toBeVisible();
@@ -169,9 +167,7 @@ test("completes the platform customer directory journey", async ({
     .filter({ hasText: "Portal E2E" });
   await primaryCustomer.getByRole("button", { name: "View customer" }).click();
   await expect(page.getByText("Platform customer record")).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Portal E2E" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Portal E2E" })).toBeVisible();
   await expect(page.getByText("Root customer", { exact: true })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Corporate credit", exact: true }),
@@ -234,9 +230,9 @@ test("completes the platform customer directory journey", async ({
   await expect(
     page.getByRole("heading", { name: "Portal Filtered Customer" }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Portal E2E" }),
-  ).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Portal E2E" })).toHaveCount(
+    0,
+  );
 
   await page.getByRole("button", { name: "Sign out" }).click();
   await expect(page.getByRole("heading", { name: "Sign in" })).toBeVisible();

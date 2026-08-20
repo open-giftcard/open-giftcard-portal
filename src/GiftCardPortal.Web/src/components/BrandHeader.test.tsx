@@ -14,5 +14,7 @@ describe("BrandHeader", () => {
     expect(
       screen.getByRole("link", { name: "Go to portal home" }),
     ).toHaveAttribute("href", "/");
+    expect(screen.getByText("Open Giftcard Portal")).toBeVisible();
+    expect(screen.getByAltText("Open Giftcard")).toBeVisible();
   });
 });

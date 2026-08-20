@@ -12,6 +12,13 @@ usable and are not listed.
 
 ### Added
 
+- Open Giftcard product identity throughout the portal and its public
+  contributor documentation.
+- Cross-replica PostgreSQL refresh coordination and bounded local refresh-lock
+  lifecycle.
+- A CI gate that verifies the committed production SPA bundle is byte-identical
+  to a clean frontend build.
+- Deployment, production-readiness, and public publishing guidance.
 - A security policy with a private reporting channel, and a contributor guide.
 - CI fails when `contracts/README.md` declares a SHA-256 that is not the hash of
   the document beside it. The in-repo contract assertions validate the committed
@@ -21,6 +28,8 @@ usable and are not listed.
 
 ### Changed
 
+- The backend contract pin now names the exact public commit verified to
+  generate the committed snapshot.
 - English is the default language and is listed first, being the source language
   of every screen. Adding a language is now a file, a line, and a widened union
   rather than an edit to `translate()`.

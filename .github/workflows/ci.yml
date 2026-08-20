@@ -57,5 +57,9 @@ jobs:
           pnpm run test
           pnpm run build
 
+      - name: Committed SPA bundle matches source
+        shell: pwsh
+        run: ./scripts/Verify-FrontendBundle.ps1
+
       - name: BFF and contract tests
         run: dotnet test GiftCardPortal.slnx --no-restore --configuration Release
