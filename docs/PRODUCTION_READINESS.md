@@ -4,7 +4,7 @@ Open Giftcard Portal is an open reference implementation. Its application-level
 controls are substantial, but this repository does not claim that a public
 deployment has been certified for production.
 
-Last reviewed: 2026-08-20.
+Last reviewed: 2026-08-24.
 
 | Area | Status | Boundary |
 | --- | --- | --- |
@@ -16,10 +16,10 @@ Last reviewed: 2026-08-20.
 | Committed production-bundle equality | Enforced in CI | Frontend changes must regenerate the committed bundle. |
 | Pinned public backend contract and generated client | Implemented and tested | Snapshot changes require an explicit public commit review. |
 | English/Turkish, keyboard, mobile, zoom, and automated accessibility | Implemented | Human assistive-technology and visual review remains. |
-| Runtime session-schema bootstrap | Reference implementation | Managed migrations and reduced runtime DDL privileges remain. |
+| Managed session-schema migrations | Implemented and tested | A separate bounded `--migrate` process owns DDL; normal BFF startup uses table DML only. Existing deployments must transfer ownership before adopting the split. |
 | Backups, HA, restore, monitoring, secrets, incident response | Deployment responsibility | Hosting evidence is outside this repository. |
 | Penetration test and public staging certification | Not completed | Required before a production claim. |
-| Coordinated public release | Not completed at last review | Public repositories had no synchronized tag on the review date. |
+| Coordinated public release | In progress | The four repositories share a verified compatibility contract. Canonical tags and the final exact-commit evidence manifest do not exist yet. |
 
 ## Unsupported boundaries
 
@@ -33,5 +33,6 @@ Last reviewed: 2026-08-20.
 
 A production-ready claim requires the complete staging checklist in
 [DEPLOYMENT.md](DEPLOYMENT.md), explicit ownership of every deployment row
-above, a reviewed public three-repository commit triplet, and a synchronized
-public tag. Passing CI alone is source evidence, not deployment certification.
+above, a reviewed public four-repository commit manifest, and synchronized
+backend, portal, cardholder, and POS tags. Passing CI alone is source evidence,
+not deployment certification.

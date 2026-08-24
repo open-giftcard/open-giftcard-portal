@@ -73,14 +73,18 @@ pnpm exec playwright install firefox chromium
 Set-Location ..\..
 ```
 
-Create a dedicated local PostgreSQL database and non-superuser login; do not
-reuse the backend database or role:
+Create a dedicated local PostgreSQL database with separate non-superuser owner
+and runtime logins; do not reuse the backend database or either backend role:
 
 ```sql
+CREATE ROLE giftcard_portal_migrator
+    LOGIN PASSWORD '<local migration password>'
+    NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS;
 CREATE ROLE giftcard_portal_app
     LOGIN PASSWORD '<local password>'
     NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS;
-CREATE DATABASE giftcard_portal OWNER giftcard_portal_app;
+CREATE DATABASE giftcard_portal OWNER giftcard_portal_migrator;
+GRANT CONNECT ON DATABASE giftcard_portal TO giftcard_portal_app;
 ```
 
 Start the pinned sibling backend at `http://localhost:5143`. In one PowerShell
@@ -89,6 +93,10 @@ window, start the BFF:
 ```powershell
 $env:ConnectionStrings__Portal =
   "Host=localhost;Port=5432;Database=giftcard_portal;Username=giftcard_portal_app;Password=<local password>"
+$env:ConnectionStrings__PortalMigrations =
+  "Host=localhost;Port=5432;Database=giftcard_portal;Username=giftcard_portal_migrator;Password=<local migration password>"
+dotnet run --project src\GiftCardPortal.Bff -- --migrate
+$env:ConnectionStrings__PortalMigrations = $null
 $env:Backend__BaseUrl = "http://localhost:5143"
 dotnet run --project src\GiftCardPortal.Bff
 ```
@@ -100,7 +108,9 @@ Set-Location src\GiftCardPortal.Web
 pnpm run dev
 ```
 
-Open `http://127.0.0.1:5173`. The BFF creates its session table on startup.
+Open `http://127.0.0.1:5173`. Normal BFF startup never creates or alters its
+session table. Run the explicit migration command before each application
+upgrade; it is checksum-protected and safe to repeat.
 Production must provide durable, protected Data Protection keys and a Secure
 `__Host-` session cookie; the Development profile deliberately permits local
 HTTP.

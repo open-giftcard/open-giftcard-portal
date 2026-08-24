@@ -10,6 +10,20 @@ using Microsoft.Extensions.Options;
 using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
+if (PortalDatabaseMigrator.IsRequested(args))
+{
+    try
+    {
+        await PortalDatabaseMigrator.RunAsync(builder.Configuration, CancellationToken.None);
+    }
+    catch (Exception exception)
+    {
+        Console.Error.WriteLine($"portal migration failed: {exception.Message}");
+        Environment.ExitCode = 1;
+    }
+    return;
+}
+
 var isDevelopment = builder.Environment.IsDevelopment();
 var knownProxyAddresses = DeploymentSafety.ReadKnownProxies(builder.Configuration);
 
@@ -91,7 +105,6 @@ builder.Services.AddSingleton(provider =>
     return NpgsqlDataSource.Create(connectionString);
 });
 builder.Services.AddSingleton<IPortalSessionStore, PostgreSqlPortalSessionStore>();
-builder.Services.AddHostedService<PortalSessionStoreInitializationService>();
 builder.Services.AddSingleton<SessionTokenProtector>();
 builder.Services.AddSingleton<PortalSessionManager>();
 builder.Services.AddSingleton<SessionRefreshCoordinator>();

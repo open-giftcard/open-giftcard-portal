@@ -14,8 +14,3 @@ public interface IPortalSessionStore
 
     Task DeleteAsync(string sessionKeyHash, CancellationToken cancellationToken);
 }
-
-public interface IPortalSessionStoreInitializer
-{
-    Task InitializeAsync(CancellationToken cancellationToken);
-}

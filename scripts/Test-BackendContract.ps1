@@ -1,13 +1,18 @@
 ﻿[CmdletBinding()]
 param(
-    [string]$BackendRepository = (Join-Path $PSScriptRoot '..\..\open-giftcard'),
+    [string]$BackendRepository,
     [uri]$BackendBaseUrl = 'http://localhost:5144'
 )
 
 $ErrorActionPreference = 'Stop'
-$expectedBranch = 'main'
-$expectedCommit = 'cfee9b1e17ab501e912d8aa8f84136d28e50dc6f'
+if ([string]::IsNullOrWhiteSpace($BackendRepository)) {
+    $BackendRepository = Join-Path $PSScriptRoot '..\..\open-giftcard'
+}
 $portalRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$releaseContract = Get-Content -Raw -LiteralPath (
+    Join-Path $portalRoot 'RELEASE_COMPATIBILITY.json') | ConvertFrom-Json
+$expectedCommit = [string]$releaseContract.backendContract.commit
+$expectedHash = [string]$releaseContract.backendContract.sha256
 $backendRoot = (Resolve-Path $BackendRepository).Path
 
 function ConvertTo-CanonicalJsonValue($Value) {
@@ -30,10 +35,9 @@ function ConvertTo-CanonicalJsonValue($Value) {
     return $Value
 }
 
-$actualBranch = (& git -C $backendRoot branch --show-current).Trim()
 $actualCommit = (& git -C $backendRoot rev-parse HEAD).Trim()
-if ($actualBranch -ne $expectedBranch -or $actualCommit -ne $expectedCommit) {
-    throw "Backend must be $expectedBranch at $expectedCommit. Found $actualBranch at $actualCommit."
+if ($actualCommit -ne $expectedCommit) {
+    throw "Backend must be at accepted commit $expectedCommit. Found $actualCommit."
 }
 
 $sourceChanges = & git -C $backendRoot status --short -- src
@@ -42,6 +46,10 @@ if ($sourceChanges) {
 }
 
 $snapshotPath = Join-Path $portalRoot 'contracts\backend.openapi.json'
+$rawSnapshotHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $snapshotPath).Hash
+if ($rawSnapshotHash -cne $expectedHash) {
+    throw "Release contract expects OpenAPI $expectedHash; snapshot hashes to $rawSnapshotHash."
+}
 $runningDocument = Invoke-WebRequest `
     -UseBasicParsing `
     -Uri ([uri]::new($BackendBaseUrl, '/swagger/v1/swagger.json')) `
@@ -81,4 +89,4 @@ if ($runningHash -ne $snapshotHash) {
     throw "Backend contract drift detected. Snapshot: $snapshotHash; running: $runningHash."
 }
 
-Write-Output "Backend contract matches $expectedCommit ($snapshotHash)."
+Write-Output "Backend contract matches $expectedCommit ($rawSnapshotHash)."

@@ -6,7 +6,7 @@ using Npgsql;
 namespace GiftCardPortal.Bff.Sessions;
 
 public sealed class PostgreSqlPortalSessionStore(NpgsqlDataSource dataSource)
-    : IPortalSessionStore, IPortalSessionStoreInitializer
+    : IPortalSessionStore
 {
     public async ValueTask<IAsyncDisposable> AcquireRefreshLockAsync(
         string sessionKeyHash,
@@ -42,33 +42,6 @@ public sealed class PostgreSqlPortalSessionStore(NpgsqlDataSource dataSource)
         {
             return false;
         }
-    }
-
-    public async Task InitializeAsync(CancellationToken cancellationToken)
-    {
-        const string sql =
-            """
-            CREATE TABLE IF NOT EXISTS portal_sessions (
-                session_key_hash text PRIMARY KEY,
-                protected_access_token text NOT NULL,
-                access_token_expires_at_utc timestamptz NOT NULL,
-                protected_refresh_token text NOT NULL,
-                refresh_token_expires_at_utc timestamptz NOT NULL,
-                selected_organization_id uuid NULL,
-                selected_tenant_root_organization_id uuid NULL,
-                created_at_utc timestamptz NOT NULL,
-                updated_at_utc timestamptz NOT NULL
-            );
-
-            ALTER TABLE portal_sessions
-                ADD COLUMN IF NOT EXISTS selected_tenant_root_organization_id uuid NULL;
-
-            CREATE INDEX IF NOT EXISTS ix_portal_sessions_refresh_expiry
-                ON portal_sessions (refresh_token_expires_at_utc);
-            """;
-
-        await using var command = dataSource.CreateCommand(sql);
-        await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
     public async Task<PortalSession?> FindAsync(

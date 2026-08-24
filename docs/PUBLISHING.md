@@ -35,5 +35,6 @@ Before publishing:
    actually exists.
 
 Create no standalone portal tag. A release uses one semantic version across the
-public portal, backend, and cardholder repositories and records the reviewed
-commit triplet. Deployment certification remains a separate gate.
+public portal, backend, cardholder, and POS repositories and records the
+reviewed four-repository commit manifest. Deployment certification remains a
+separate gate.

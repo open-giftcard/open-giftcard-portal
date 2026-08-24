@@ -10,18 +10,20 @@ $ErrorActionPreference = 'Stop'
 if ([string]::IsNullOrWhiteSpace($BackendRepository)) {
     $BackendRepository = Join-Path $PSScriptRoot '..\..\open-giftcard'
 }
-$expectedBranch = 'main'
-$expectedCommit = 'cfee9b1e17ab501e912d8aa8f84136d28e50dc6f'
 $backendDatabase = 'giftcard_portal_e2e_backend'
 $backendMigrator = 'giftcard_portal_e2e_migrator'
 $backendApp = 'giftcard_portal_e2e_app'
 $portalDatabase = 'giftcard_portal_e2e_sessions'
+$portalMigrator = 'giftcard_portal_e2e_sessions_migrator'
 $portalApp = 'giftcard_portal_e2e_sessions_app'
 $backendPort = 5144
 $bffPort = 5179
 $webPort = 5183
 
 $portalRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$releaseContract = Get-Content -Raw -LiteralPath (
+    Join-Path $portalRoot 'RELEASE_COMPATIBILITY.json') | ConvertFrom-Json
+$expectedCommit = [string]$releaseContract.backendContract.commit
 $backendRoot = (Resolve-Path $BackendRepository).Path
 if ([string]::IsNullOrWhiteSpace($BackendEnvironmentFile)) {
     $BackendEnvironmentFile = Join-Path $backendRoot '.env'
@@ -140,6 +142,7 @@ foreach ($name in @(
     $backendMigrator,
     $backendApp,
     $portalDatabase,
+    $portalMigrator,
     $portalApp
 )) {
     Assert-DisposableName $name
@@ -161,10 +164,9 @@ if (!(Test-Path $vite)) {
     throw "Install frontend dependencies before running E2E."
 }
 
-$actualBranch = (& git -C $backendRoot branch --show-current).Trim()
 $actualCommit = (& git -C $backendRoot rev-parse HEAD).Trim()
-if ($actualBranch -ne $expectedBranch -or $actualCommit -ne $expectedCommit) {
-    throw "Backend must be $expectedBranch at $expectedCommit. Found $actualBranch at $actualCommit."
+if ($actualCommit -ne $expectedCommit) {
+    throw "Backend must be at accepted commit $expectedCommit. Found $actualCommit."
 }
 
 $sourceChanges = & git -C $backendRoot status --short -- src
@@ -183,6 +185,7 @@ if ([string]::IsNullOrWhiteSpace($administrator) -or
 $backendPassword = [Guid]::NewGuid().ToString('N')
 $migratorPassword = [Guid]::NewGuid().ToString('N')
 $portalPassword = [Guid]::NewGuid().ToString('N')
+$portalMigratorPassword = [Guid]::NewGuid().ToString('N')
 $jwtKey = "{0}{1}" -f [Guid]::NewGuid().ToString('N'), [Guid]::NewGuid().ToString('N')
 $bootstrapSecret = "{0}{1}" -f [Guid]::NewGuid().ToString('N'), [Guid]::NewGuid().ToString('N')
 $platformEmail = 'portal.platform.e2e@example.test'
@@ -212,6 +215,7 @@ DROP DATABASE IF EXISTS $portalDatabase;
 DROP ROLE IF EXISTS $backendApp;
 DROP ROLE IF EXISTS $backendMigrator;
 DROP ROLE IF EXISTS $portalApp;
+DROP ROLE IF EXISTS $portalMigrator;
 "@
     Invoke-Psql 'postgres' $administrator $administratorPassword $dropSql
 
@@ -222,8 +226,10 @@ CREATE ROLE $backendApp LOGIN PASSWORD '$backendPassword'
     NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS;
 CREATE ROLE $portalApp LOGIN PASSWORD '$portalPassword'
     NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS;
+CREATE ROLE $portalMigrator LOGIN PASSWORD '$portalMigratorPassword'
+    NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS;
 CREATE DATABASE $backendDatabase OWNER $backendMigrator;
-CREATE DATABASE $portalDatabase OWNER $portalApp;
+CREATE DATABASE $portalDatabase OWNER $portalMigrator;
 "@
     Invoke-Psql 'postgres' $administrator $administratorPassword $createSql
 
@@ -572,6 +578,12 @@ ALTER DEFAULT PRIVILEGES FOR ROLE $backendMigrator IN SCHEMA payments
 
     $env:ConnectionStrings__Portal =
         "Host=localhost;Port=5432;Database=$portalDatabase;Username=$portalApp;Password=$portalPassword"
+    $env:ConnectionStrings__PortalMigrations =
+        "Host=localhost;Port=5432;Database=$portalDatabase;Username=$portalMigrator;Password=$portalMigratorPassword"
+    & dotnet $bffAssembly --migrate
+    if ($LASTEXITCODE -ne 0) {
+        throw 'Portal session database migration failed.'
+    }
     $env:Backend__BaseUrl = "http://127.0.0.1:$backendPort"
     $env:ASPNETCORE_URLS = "http://127.0.0.1:$bffPort"
     $bffProcess = Start-Process `
@@ -648,6 +660,7 @@ DROP DATABASE IF EXISTS $portalDatabase;
 DROP ROLE IF EXISTS $backendApp;
 DROP ROLE IF EXISTS $backendMigrator;
 DROP ROLE IF EXISTS $portalApp;
+DROP ROLE IF EXISTS $portalMigrator;
 "@
         Invoke-Psql 'postgres' $administrator $administratorPassword $cleanupSql
     }
