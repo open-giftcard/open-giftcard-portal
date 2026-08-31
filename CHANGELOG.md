@@ -12,6 +12,12 @@ usable and are not listed.
 
 ### Added
 
+- A `Dockerfile`, so the portal can be brought up alongside the API with
+  `docker compose -f docker-compose.yml -f docker-compose.full.yml up` from the
+  backend repository. It mirrors the backend image and reuses the committed SPA
+  bundle, which CI already checks against its TypeScript source. Not yet built:
+  the machine this was written on has no Docker.
+
 - Open Giftcard product identity throughout the portal and its public
   contributor documentation.
 - Cross-replica PostgreSQL refresh coordination and bounded local refresh-lock
@@ -27,6 +33,15 @@ usable and are not listed.
   and code owners.
 
 ### Changed
+
+- **`RELEASE_COMPATIBILITY.json` no longer names tags that do not exist.** It
+  declared release `v0.5.0-rc.1` and gave all four components that tag, and no
+  repository has ever had a public tag. Schema version 2 adds a `development`
+  channel for that state, and on a released channel now requires the tag it
+  names to resolve locally. `scripts/Test-ReleaseContract.ps1` enforces both,
+  and additionally rejects a byte order mark or CRLF line endings, so the file
+  can be byte-identical in all four repositories. It had been CRLF in the
+  backend and LF in the other three.
 
 - The backend contract pin now names the exact public commit verified to
   generate the committed snapshot.
