@@ -24,8 +24,13 @@ RUN dotnet restore src/GiftCardPortal.Bff/GiftCardPortal.Bff.csproj
 # add Node and pnpm to the image for a result that is already verified, so the
 # committed bundle is used as-is. Verify-FrontendBundle.ps1 is what keeps that
 # honest; if it is ever removed, this image must build the SPA itself.
+#
+# SkipFrontendBuild is the project's own escape hatch for exactly this. Without
+# it the publish runs the BuildFrontendForPublish target, which shells out to
+# pnpm in ../GiftCardPortal.Web, a directory this image deliberately does not
+# copy, and fails with "The working directory does not exist".
 RUN dotnet publish src/GiftCardPortal.Bff/GiftCardPortal.Bff.csproj \
-    -c Release -o /app --no-restore
+    -c Release -o /app --no-restore -p:SkipFrontendBuild=true
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 
