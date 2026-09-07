@@ -137,7 +137,7 @@ public sealed record PortalRoleAssignmentResponse(
 
 public sealed record PortalCorporateCreditBalanceResponse(
     string Currency,
-    double Amount);
+    decimal Amount);
 
 public sealed record PortalCorporateCreditReversalSummaryResponse(
     string Reason,
@@ -145,7 +145,7 @@ public sealed record PortalCorporateCreditReversalSummaryResponse(
 
 public sealed record PortalCorporateCreditAllocationResponse(
     Guid Id,
-    double Amount,
+    decimal Amount,
     string Currency,
     string BusinessReference,
     DateTimeOffset AllocatedAtUtc,
@@ -157,7 +157,7 @@ public sealed record PortalCorporateCreditHistoryPageResponse(
     string? NextCursor);
 
 public sealed record PortalCorporateCreditReversalResponse(
-    double Amount,
+    decimal Amount,
     string Currency,
     string Reason,
     DateTimeOffset ReversedAtUtc);
@@ -166,7 +166,7 @@ public sealed record PortalGiftCardResponse(
     Guid Id,
     string PublicReference,
     string BusinessReference,
-    double FundedAmount,
+    decimal FundedAmount,
     string Currency,
     string OwnershipState,
     string LifecycleState,
@@ -186,7 +186,7 @@ public sealed record PortalGiftCardLifecycleEventResponse(
     string PreviousState,
     string NewState,
     string Reason,
-    double? ReturnedAmount,
+    decimal? ReturnedAmount,
     string? Currency,
     DateTimeOffset OccurredAtUtc);
 
@@ -209,7 +209,7 @@ public sealed record PortalBulkGiftCardBatchItemResponse(
     string? GiftCardPublicReference,
     string ContactType,
     string MaskedRecipientContact,
-    double Amount,
+    decimal Amount,
     string Currency,
     string? GiftCardState,
     string? InvitationState,
@@ -248,14 +248,14 @@ public sealed record PortalOrganizationResponse(
 
 public sealed record PortalFinancialCurrencySummaryResponse(
     string Currency,
-    double Granted,
-    double Reversed,
-    double Issued,
-    double Distributed,
-    double RemainingCorporateCredit,
-    double RemainingGiftCardValue,
-    double CancelledReturned,
-    double ExpiredReturned);
+    decimal Granted,
+    decimal Reversed,
+    decimal Issued,
+    decimal Distributed,
+    decimal RemainingCorporateCredit,
+    decimal RemainingGiftCardValue,
+    decimal CancelledReturned,
+    decimal ExpiredReturned);
 
 public sealed record PortalFinancialSummaryResponse(
     DateTimeOffset AsOfUtc,
@@ -267,7 +267,7 @@ public sealed record PortalFinancialHistoryItemResponse(
     string Operation,
     string? GiftCardPublicReference,
     string? BusinessReference,
-    double? Amount,
+    decimal? Amount,
     string? Currency,
     string FinancialDirection,
     string? State,
@@ -292,9 +292,9 @@ public sealed record PortalCardRegisterItemResponse(
     string PublicReference,
     string LifecycleState,
     string OwnershipState,
-    double FundedAmount,
+    decimal FundedAmount,
     string Currency,
-    double? RemainingBalance,
+    decimal? RemainingBalance,
     string? MaskedRecipientContact,
     DateTimeOffset ValidFromUtc,
     DateTimeOffset ExpiresAtUtc,
@@ -313,8 +313,8 @@ public sealed record PortalReconciliationFindingResponse(
     string EntityType,
     string? TechnicalReference,
     string? Currency,
-    double? ExpectedAmount,
-    double? ActualAmount,
+    decimal? ExpectedAmount,
+    decimal? ActualAmount,
     string Message);
 
 public sealed record PortalFinancialReconciliationResponse(
@@ -350,10 +350,10 @@ public sealed record PortalPaymentReportItemResponse(
     string PosTerminalCode,
     string StoreReference,
     string? PosTransactionReference,
-    double ProvisionedAmount,
-    double? ConfirmedAmount,
-    double RefundedAmount,
-    double NetAmount,
+    decimal ProvisionedAmount,
+    decimal? ConfirmedAmount,
+    decimal RefundedAmount,
+    decimal NetAmount,
     string Currency,
     string State,
     bool IsFullyReversed,
@@ -367,10 +367,10 @@ public sealed record PortalPaymentReportCurrencyTotalsResponse(
     long ConfirmedPaymentCount,
     long RefundCount,
     long FullyReversedPaymentCount,
-    double ProvisionedAmount,
-    double ConfirmedAmount,
-    double RefundedAmount,
-    double NetAmount);
+    decimal ProvisionedAmount,
+    decimal ConfirmedAmount,
+    decimal RefundedAmount,
+    decimal NetAmount);
 
 public sealed record PortalPaymentReportPageResponse(
     IReadOnlyList<PortalPaymentReportItemResponse> Items,
@@ -384,7 +384,7 @@ public sealed record PortalPaymentRefundResponse(
     string StoreReference,
     string? PosTransactionReference,
     string Reason,
-    double Amount,
+    decimal Amount,
     DateTimeOffset RefundedAtUtc);
 
 public sealed record PortalPaymentReceiptResponse(

@@ -7,7 +7,7 @@ namespace GiftCardPortal.Bff.Backend;
 
 public sealed record BackendBulkGiftCardBatchItem(
     string ItemReference,
-    double Amount,
+    decimal Amount,
     string Currency,
     DateTimeOffset? ValidFromUtc,
     DateTimeOffset ExpiresAtUtc,
@@ -284,7 +284,7 @@ public sealed class BackendGateway(
         IssueGiftCardAsync(
             PortalSession session,
             Guid selectedOrganizationId,
-            double amount,
+            decimal amount,
             string currency,
             DateTimeOffset? validFromUtc,
             DateTimeOffset expiresAtUtc,
@@ -509,7 +509,7 @@ public sealed class BackendGateway(
         AllocatePlatformCorporateCreditAsync(
             PortalSession session,
             Guid organizationId,
-            double amount,
+            decimal amount,
             string currency,
             string businessReference,
             string idempotencyKey,

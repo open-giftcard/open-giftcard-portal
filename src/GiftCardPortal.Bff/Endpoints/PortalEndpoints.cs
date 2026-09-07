@@ -484,7 +484,7 @@ public static class PortalEndpoints
             var (_, allocation) = await backend.AllocatePlatformCorporateCreditAsync(
                 session,
                 organizationId,
-                (double)amount,
+                amount,
                 request.Currency.Trim(),
                 request.BusinessReference.Trim(),
                 $"portal-allocation-{request.OperationId:N}",
@@ -1133,7 +1133,7 @@ public static class PortalEndpoints
             var (_, giftCard) = await backend.IssueGiftCardAsync(
                 session,
                 session.SelectedOrganizationId!.Value,
-                (double)amount,
+                amount,
                 request.Currency.Trim(),
                 validFromUtc,
                 expiresAtUtc,
@@ -1375,7 +1375,7 @@ public static class PortalEndpoints
 
             items.Add(new BackendBulkGiftCardBatchItem(
                 item.ItemReference.Trim(),
-                (double)amount,
+                amount,
                 item.Currency.Trim(),
                 validFromUtc,
                 expiresAtUtc,
