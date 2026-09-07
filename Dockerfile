@@ -9,6 +9,13 @@ WORKDIR /source
 # re-download packages. Central package management means the two Directory.*
 # files are part of the restore graph.
 COPY global.json Directory.Build.props Directory.Packages.props GiftCardPortal.slnx ./
+
+# The BFF generates its backend client from the pinned OpenAPI document at
+# build time, through an OpenApiReference in its csproj. Without this the
+# publish fails with "Input OpenAPI file ../../contracts/backend.openapi.json
+# does not exist", which reads like a missing file rather than a missing COPY.
+COPY contracts/ contracts/
+
 COPY src/GiftCardPortal.Bff/ src/GiftCardPortal.Bff/
 RUN dotnet restore src/GiftCardPortal.Bff/GiftCardPortal.Bff.csproj
 
