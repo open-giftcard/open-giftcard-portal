@@ -3,7 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Npgsql" Version="10.0.3" />
+    <PackageVersion Include="Npgsql" Version="11.0.0" />
     <PackageVersion Include="NSwag.ApiDescription.Client" Version="14.7.1" />
   </ItemGroup>
   <ItemGroup Label="Testing">
